@@ -114,66 +114,6 @@ Enterprise and compliance teams spend hours digging through contracts, reports a
 Nyansa AI gives teams **document intelligence they can verify**. Every answer links straight back to its source, so it holds up to institutional scrutiny.`,
   },
   {
-    slug: "elsasu-rentals",
-    client: "Elsasu Rentals",
-    title: "Booking platform for chauffeur-driven group travel",
-    summary:
-      "Instant route quotes, MoMo and card checkout via Paystack, live trip tracking and a WhatsApp booking assistant.",
-    tags: ["Web app", "Payments", "AI assistant"],
-    categories: ["web", "payments", "automation"],
-    services: ["web-mobile-apps", "ai-automation"],
-    metric: { value: "Instant", label: "quotes with MoMo & card checkout" },
-    liveUrl: "https://www.elsasurentals.com/",
-    image: elsasuDesktop,
-    mobileImage: elsasuMobile,
-    featured: true,
-    content: `## The brief
-
-Group travel in Ghana, whether it's churches, weddings, funerals, tours, diaspora visits or staff shuttles, usually means phone calls, waiting and back-and-forth about price. Elsasu Rentals wanted customers to see a price and book in minutes.
-
-## What we built
-
-- A booking flow with instant quotes for airport transfers, half and full days, outstation trips, events and multi-day hires
-- MoMo and card payments through Paystack, with a 30% deposit to confirm
-- A live tracking link the whole group can follow
-- A WhatsApp and on-site booking assistant for questions around the clock
-- Fleet, destination and pricing pages that work beautifully on mobile
-
-## The result
-
-Customers see their exact price in seconds, with **no sign-up needed to get a quote**, and pay with the method they already use.`,
-  },
-  {
-    slug: "pastcs",
-    client: "PastCS",
-    title: "Exam practice for University of Ghana CS students",
-    summary:
-      "Turns course outlines into real preparation: a growing question bank, timed mock exams and an AI tutor that explains mistakes.",
-    tags: ["EdTech", "AI tutor", "Web app"],
-    categories: ["education", "ai", "web"],
-    services: ["web-mobile-apps", "custom-software"],
-    metric: { value: "500+", label: "students" },
-    liveUrl: "https://www.pastcs.com/",
-    image: pastcsDesktop,
-    mobileImage: pastcsMobile,
-    featured: true,
-    content: `## The brief
-
-Computer Science students at the University of Ghana needed realistic exam practice tied to the courses they actually take, not generic question banks.
-
-## What we built
-
-- A question bank mapped to course outlines, now **1000+ questions** across 6+ courses
-- Timed mock exams that simulate the real thing
-- An AI tutor that explains what each student got wrong
-- A personal dashboard with streaks, scores and course progress
-- A leaderboard to keep practice social
-
-## The result
-
-**500+ students** use PastCS to practise, and it's free to start.`,
-  },
-  {
     slug: "taxi-mondial",
     client: "Taxi Mondial",
     title: "24/7 taxi and transport website for Sherbrooke, Québec",
@@ -232,6 +172,66 @@ Arizona Creative Minds is a DDD-licensed provider that supports people with deve
 ## The result
 
 Families across Arizona can **learn about care options and reach the team in one tap**, and the provider has a steady channel for hiring.`,
+  },
+  {
+    slug: "elsasu-rentals",
+    client: "Elsasu Rentals",
+    title: "Booking platform for chauffeur-driven group travel",
+    summary:
+      "Instant route quotes, MoMo and card checkout via Paystack, live trip tracking and a WhatsApp booking assistant.",
+    tags: ["Web app", "Payments", "AI assistant"],
+    categories: ["web", "payments", "automation"],
+    services: ["web-mobile-apps", "ai-automation"],
+    metric: { value: "Instant", label: "quotes with MoMo & card checkout" },
+    liveUrl: "https://www.elsasurentals.com/",
+    image: elsasuDesktop,
+    mobileImage: elsasuMobile,
+    featured: true,
+    content: `## The brief
+
+Group travel in Ghana, whether it's churches, weddings, funerals, tours, diaspora visits or staff shuttles, usually means phone calls, waiting and back-and-forth about price. Elsasu Rentals wanted customers to see a price and book in minutes.
+
+## What we built
+
+- A booking flow with instant quotes for airport transfers, half and full days, outstation trips, events and multi-day hires
+- MoMo and card payments through Paystack, with a 30% deposit to confirm
+- A live tracking link the whole group can follow
+- A WhatsApp and on-site booking assistant for questions around the clock
+- Fleet, destination and pricing pages that work beautifully on mobile
+
+## The result
+
+Customers see their exact price in seconds, with **no sign-up needed to get a quote**, and pay with the method they already use.`,
+  },
+  {
+    slug: "pastcs",
+    client: "PastCS",
+    title: "Exam practice for University of Ghana CS students",
+    summary:
+      "Turns course outlines into real preparation: a growing question bank, timed mock exams and an AI tutor that explains mistakes.",
+    tags: ["EdTech", "AI tutor", "Web app"],
+    categories: ["education", "ai", "web"],
+    services: ["web-mobile-apps", "custom-software"],
+    metric: { value: "500+", label: "students" },
+    liveUrl: "https://www.pastcs.com/",
+    image: pastcsDesktop,
+    mobileImage: pastcsMobile,
+    featured: true,
+    content: `## The brief
+
+Computer Science students at the University of Ghana needed realistic exam practice tied to the courses they actually take, not generic question banks.
+
+## What we built
+
+- A question bank mapped to course outlines, now **1000+ questions** across 6+ courses
+- Timed mock exams that simulate the real thing
+- An AI tutor that explains what each student got wrong
+- A personal dashboard with streaks, scores and course progress
+- A leaderboard to keep practice social
+
+## The result
+
+**500+ students** use PastCS to practise, and it's free to start.`,
   },
   {
     slug: "whatsapp-ai-assistant",
