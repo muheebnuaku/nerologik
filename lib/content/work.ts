@@ -1,6 +1,8 @@
 import type { StaticImageData } from "next/image";
 
 import type { ServiceSlug } from "@/lib/content/services";
+import arizonaDesktop from "@/public/work/arizona-creative-minds-desktop.png";
+import arizonaMobile from "@/public/work/arizona-creative-minds-mobile.png";
 import elsasuDesktop from "@/public/work/elsasu-rentals-desktop.png";
 import elsasuMobile from "@/public/work/elsasu-rentals-mobile.png";
 import hustleclickDesktop from "@/public/work/hustleclickgh-desktop.png";
@@ -9,6 +11,8 @@ import nyansaDesktop from "@/public/work/nyansa-ai-desktop.png";
 import nyansaMobile from "@/public/work/nyansa-ai-mobile.png";
 import pastcsDesktop from "@/public/work/pastcs-desktop.png";
 import pastcsMobile from "@/public/work/pastcs-mobile.png";
+import taxiDesktop from "@/public/work/taxi-mondial-desktop.png";
+import taxiMobile from "@/public/work/taxi-mondial-mobile.png";
 
 /**
  * Real Nerologik projects. Every fact below is taken from the live product.
@@ -168,6 +172,66 @@ Computer Science students at the University of Ghana needed realistic exam pract
 ## The result
 
 **500+ students** use PastCS to practise, and it's free to start.`,
+  },
+  {
+    slug: "taxi-mondial",
+    client: "Taxi Mondial",
+    title: "24/7 taxi and transport website for Sherbrooke, Québec",
+    summary:
+      "A bilingual English/French site for a Sherbrooke taxi company: one-tap calling, online taxi orders, six services from airport transfers to adapted transport, and long-distance routes across Québec.",
+    tags: ["Website", "Bilingual", "Local business"],
+    categories: ["web"],
+    services: ["web-mobile-apps"],
+    metric: { value: "24/7", label: "booking by phone or online" },
+    liveUrl: "https://taxi-mondial.ca/",
+    image: taxiDesktop,
+    mobileImage: taxiMobile,
+    featured: true,
+    content: `## The brief
+
+Taxi Mondial Sherbrooke runs around the clock, for local rides and trips across Québec. Riders needed to find the right service and book it fast, in English or French, usually from a phone.
+
+## What we built
+
+- A bilingual English/French website with a language switch on every page
+- A one-tap "Call now" button and an "Order a taxi" flow
+- Pages for six services: city taxi, airport transfers, school transport, accessibility and mobility assistance, locksmith lock-outs and battery boosts
+- Long-distance routes from Sherbrooke to Montréal, Québec City, Trois-Rivières, Granby, Magog, Drummondville and more
+- A blog, plus an about page, contact page and customer feedback section, all built mobile-first
+
+## The result
+
+Riders in Sherbrooke can **book a taxi 24/7**, by phone or online, in their own language.`,
+  },
+  {
+    slug: "arizona-creative-minds",
+    client: "Arizona Creative Minds",
+    title: "Website for a DDD-licensed disability care provider in Arizona",
+    summary:
+      "A warm, accessible site for an Arizona provider supporting people with developmental disabilities: services, family testimonials, a careers page and instant chat on WhatsApp, Messenger and Telegram.",
+    tags: ["Website", "Healthcare", "Recruiting"],
+    categories: ["web"],
+    services: ["web-mobile-apps"],
+    metric: { value: "DDD", label: "licensed provider in Arizona" },
+    liveUrl: "https://arizonacreativemind.com/",
+    image: arizonaDesktop,
+    mobileImage: arizonaMobile,
+    featured: true,
+    content: `## The brief
+
+Arizona Creative Minds is a DDD-licensed provider that supports people with developmental disabilities, including autism, cerebral palsy, Down syndrome and epilepsy, at home and in residential settings. Families needed to understand the services and get in touch easily. The team also needed to hire caring staff.
+
+## What we built
+
+- Service pages for habilitation, attendant care, housekeeping, respite and residential support
+- A "Who we are" story section with a video, and testimonials from client families
+- A "We're hiring" careers page to recruit care professionals
+- One-tap chat on WhatsApp, Messenger and Telegram, plus a contact page
+- A cookie notice and a calm, mobile-first design built around the brand's artwork
+
+## The result
+
+Families across Arizona can **learn about care options and reach the team in one tap**, and the provider has a steady channel for hiring.`,
   },
   {
     slug: "whatsapp-ai-assistant",

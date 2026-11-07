@@ -20,9 +20,9 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   location: "Accra, Ghana",
   email: "kwabenacrys@gmail.com",
-  // TODO(owner): second contact email (shown on the contact page once filled in)
+  // TODO(owner): second contact email (not shown on the contact page)
   secondaryEmail: "" as string,
-  whatsappUrl: "https://wa.me/233592405403",
+  whatsappUrl: "https://wa.me/18199198276",
   phones: [
     { label: "Ghana", display: "+233 59 240 5403", tel: "+233592405403" },
     { label: "Canada", display: "+1 (819) 919-8276", tel: "+18199198276" },

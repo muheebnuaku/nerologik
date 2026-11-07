@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CalendarDays, Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { CalendarDays, Clock, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import { ContactForm } from "@/components/contact/contact-form";
 import { Button } from "@/components/ui/button";
@@ -24,14 +24,10 @@ export default async function ContactPage({ searchParams }: Props) {
     {
       icon: MessageCircle,
       label: "WhatsApp",
-      value: `Chat with us · ${siteConfig.phones[0].display}`,
+      value: `Chat with us · ${siteConfig.phones[1].display}`,
       href: siteConfig.whatsappUrl,
       external: true,
     },
-    { icon: Mail, label: "Email", value: siteConfig.email, href: `mailto:${siteConfig.email}`, external: false },
-    ...(siteConfig.secondaryEmail
-      ? [{ icon: Mail, label: "Email", value: siteConfig.secondaryEmail, href: `mailto:${siteConfig.secondaryEmail}`, external: false }]
-      : []),
     ...siteConfig.phones.map((p) => ({
       icon: Phone,
       label: `Call · ${p.label}`,
