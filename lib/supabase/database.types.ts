@@ -1,0 +1,133 @@
+/**
+ * Database types for the schema in supabase/migrations.
+ * Matches the `supabase gen types typescript` format, so it can be replaced with:
+ *   npx supabase gen types typescript --project-id vfdtjkgglxrqqjrdntfl > lib/supabase/database.types.ts
+ */
+
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+
+type Timestamps = { created_at: string; updated_at: string };
+
+type CaseStudyRow = Timestamps & {
+  id: string;
+  slug: string;
+  client: string;
+  title: string;
+  summary: string;
+  content: string;
+  tags: string[];
+  categories: string[];
+  services: string[];
+  metric_value: string | null;
+  metric_label: string | null;
+  live_url: string;
+  live_label: string | null;
+  image_url: string | null;
+  mobile_image_url: string | null;
+  featured: boolean;
+  sort_order: number;
+  is_published: boolean;
+  published_at: string | null;
+};
+
+type TestimonialRow = Timestamps & {
+  id: string;
+  name: string;
+  role: string | null;
+  company: string | null;
+  quote: string;
+  avatar_url: string | null;
+  case_study_id: string | null;
+  sort_order: number;
+  is_published: boolean;
+};
+
+type PostRow = Timestamps & {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  author: string;
+  cover_image_url: string | null;
+  is_published: boolean;
+  published_at: string | null;
+};
+
+export type LeadStatus = "new" | "contacted" | "qualified" | "won" | "lost" | "spam";
+
+type LeadRow = Timestamps & {
+  id: string;
+  name: string;
+  email: string;
+  company: string | null;
+  service: string;
+  budget: string;
+  message: string;
+  source: string | null;
+  status: LeadStatus;
+  notes: string | null;
+};
+
+type SubscriberRow = {
+  id: string;
+  created_at: string;
+  email: string;
+  source: string | null;
+  status: "subscribed" | "unsubscribed";
+  unsubscribed_at: string | null;
+};
+
+/** Columns with defaults are optional on insert. */
+type Defaults = "id" | "created_at" | "updated_at";
+type InsertOf<Row, Optional extends keyof Row> = Omit<Row, Optional> & Partial<Pick<Row, Optional>>;
+
+type Table<Row, Insert> = {
+  Row: Row;
+  Insert: Insert;
+  Update: Partial<Row>;
+  Relationships: [];
+};
+
+export type Database = {
+  public: {
+    Tables: {
+      admins: Table<{ user_id: string; created_at: string }, { user_id: string; created_at?: string }>;
+      leads: Table<
+        LeadRow,
+        // Only these columns are insertable by the public (column grants in the migration).
+        InsertOf<
+          Pick<LeadRow, "name" | "email" | "company" | "service" | "budget" | "message" | "source">,
+          "company" | "source"
+        >
+      >;
+      newsletter_subscribers: Table<SubscriberRow, { email: string; source?: string | null }>;
+      case_studies: Table<
+        CaseStudyRow,
+        InsertOf<
+          CaseStudyRow,
+          | Defaults
+          | "content" | "tags" | "categories" | "services" | "metric_value" | "metric_label"
+          | "live_label" | "image_url" | "mobile_image_url" | "featured" | "sort_order"
+          | "is_published" | "published_at"
+        >
+      >;
+      testimonials: Table<
+        TestimonialRow,
+        InsertOf<TestimonialRow, Defaults | "role" | "company" | "avatar_url" | "case_study_id" | "sort_order" | "is_published">
+      >;
+      posts: Table<
+        PostRow,
+        InsertOf<PostRow, Defaults | "content" | "author" | "cover_image_url" | "is_published" | "published_at">
+      >;
+    };
+    Views: { [_ in never]: never };
+    Functions: { is_admin: { Args: Record<string, never>; Returns: boolean } };
+    Enums: { [_ in never]: never };
+    CompositeTypes: { [_ in never]: never };
+  };
+};
+
+export type Tables<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Row"];
+export type TablesInsert<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Insert"];
