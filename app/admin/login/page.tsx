@@ -20,7 +20,15 @@ export default async function AdminLoginPage({ searchParams }: Props) {
           <h1 className="font-display text-xl font-semibold">Admin sign in</h1>
           <p className="text-sm text-muted-foreground">Client enquiries and business analyses.</p>
         </div>
-        <LoginForm initialError={error === "not-admin" ? "This account doesn't have admin access." : undefined} />
+        <LoginForm
+          initialError={
+            error === "not-admin"
+              ? "This account doesn't have admin access."
+              : error === "config"
+                ? "Supabase isn't configured on this deployment. Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY and SUPABASE_SECRET_KEY in Vercel → Settings → Environment Variables, then redeploy."
+                : undefined
+          }
+        />
       </div>
     </div>
   );

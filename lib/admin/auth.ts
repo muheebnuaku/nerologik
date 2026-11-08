@@ -11,6 +11,9 @@ import { createClient } from "@/lib/supabase/server";
  * Cached per request so the layout and page share one check.
  */
 export const requireAdmin = cache(async () => {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+    redirect("/admin/login?error=config");
+  }
   const supabase = await createClient();
   const {
     data: { user },

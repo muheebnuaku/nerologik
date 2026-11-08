@@ -13,6 +13,9 @@ export type ActionState = { ok: boolean; message: string } | null;
 
 /* ───────────── Auth ───────────── */
 
+const CONFIG_MESSAGE =
+  "Supabase isn't configured on this deployment. Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY and SUPABASE_SECRET_KEY in Vercel → Settings → Environment Variables, then redeploy.";
+
 const loginSchema = z.object({
   email: z.email().max(200),
   password: z.string().min(6).max(200),
@@ -21,6 +24,9 @@ const loginSchema = z.object({
 export async function signIn(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const parsed = loginSchema.safeParse({ email: formData.get("email"), password: formData.get("password") });
   if (!parsed.success) return { ok: false, message: "Enter your email and password." };
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+    return { ok: false, message: CONFIG_MESSAGE };
+  }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword(parsed.data);

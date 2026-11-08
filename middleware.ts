@@ -8,10 +8,18 @@ import { NextResponse, type NextRequest } from "next/server";
  */
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const isLogin = request.nextUrl.pathname === "/admin/login";
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return response;
+  if (!url || !key) {
+    // Supabase isn't configured on this deployment: show the login page's setup message.
+    if (isLogin) return response;
+    const login = request.nextUrl.clone();
+    login.pathname = "/admin/login";
+    login.search = "?error=config";
+    return NextResponse.redirect(login);
+  }
 
   const supabase = createServerClient(url, key, {
     cookies: {
@@ -28,7 +36,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isLogin = request.nextUrl.pathname === "/admin/login";
   if (!user && !isLogin) {
     const login = request.nextUrl.clone();
     login.pathname = "/admin/login";
