@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck, Flame, ListChecks, MessageCircleQuestion, Plus } from "lucide-react";
+import { ArrowRight, CalendarCheck, CalendarPlus, Flame, ListChecks, MessageCircleQuestion } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -75,7 +75,7 @@ export default async function ResearchOverview() {
           </div>
           <form action="/research/log/go" className="flex items-center gap-2">
             <label htmlFor="log-date" className="sr-only">
-              Date to log
+              Date to add to the calendar
             </label>
             <input
               id="log-date"
@@ -87,7 +87,7 @@ export default async function ResearchOverview() {
               className="h-9 rounded-lg border border-input bg-background px-2.5 text-sm"
             />
             <Button type="submit" size="sm">
-              <Plus /> Add log
+              <CalendarPlus /> Add to calendar
             </Button>
           </form>
         </div>
