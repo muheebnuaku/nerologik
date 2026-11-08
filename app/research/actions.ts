@@ -23,7 +23,7 @@ function guard(...texts: (string | null | undefined)[]): Result | null {
 }
 
 const done = (message = "Saved."): Result => {
-  revalidatePath("/admin/research", "layout");
+  revalidatePath("/research", "layout");
   return { ok: true, message };
 };
 

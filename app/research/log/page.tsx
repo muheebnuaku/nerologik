@@ -21,12 +21,12 @@ export default async function LogListPage() {
     <>
       <div className="flex flex-wrap items-center gap-2">
         <Button asChild>
-          <Link href={`/admin/research/log/${today}`}>
+          <Link href={`/research/log/${today}`}>
             <PenLine /> {mine.has(today) ? "Edit today's log" : "Write today's log"}
           </Link>
         </Button>
         <Button asChild variant="outline">
-          <a href="/admin/research/export" download>
+          <a href="/research/export" download>
             <Download /> Export my notes
           </a>
         </Button>
@@ -42,7 +42,7 @@ export default async function LogListPage() {
             const status = l ? "logged" : d < today ? "missed" : d === today ? "today" : "upcoming";
             return (
               <li key={d}>
-                <Link href={`/admin/research/log/${d}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-accent">
+                <Link href={`/research/log/${d}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-accent">
                   <span className="w-28 shrink-0 text-sm font-medium">{formatDay(d)}</span>
                   <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
                     {e ? e.painTask || e.tasksDid[0]?.task || `${items} notes` : ""}
@@ -80,7 +80,7 @@ export default async function LogListPage() {
                   <span className="font-medium">{t}</span>
                   <span className="text-muted-foreground">· {theirs.length} logs:</span>
                   {theirs.slice(-6).map((l) => (
-                    <Link key={l.date} href={`/admin/research/log/${l.date}?o=${encodeURIComponent(t)}`} className="text-brand hover:underline">
+                    <Link key={l.date} href={`/research/log/${l.date}?o=${encodeURIComponent(t)}`} className="text-brand hover:underline">
                       {formatDay(l.date)}
                     </Link>
                   ))}
@@ -89,7 +89,7 @@ export default async function LogListPage() {
             })}
           </ul>
         )}
-        <form action="/admin/research/log/go" className="flex flex-wrap items-end gap-2">
+        <form action="/research/log/go" className="flex flex-wrap items-end gap-2">
           <Input name="o" required maxLength={60} placeholder="Teammate's first name" className="h-10 w-48 px-3" aria-label="Teammate" />
           <Input name="d" type="date" required defaultValue={today} className="h-10 w-44 px-3" aria-label="Date" />
           <Button type="submit" variant="outline">

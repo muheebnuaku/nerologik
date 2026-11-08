@@ -2,16 +2,13 @@ import "server-only";
 
 import { cache } from "react";
 
-import { requireAdmin } from "@/lib/admin/auth";
+import { requireResearcher } from "./auth";
 
 import type { LogRecord, StepRecord } from "./analysis";
 import { defaultQuestions, defaultSteps, readEntry } from "./config";
 
-/** Session client for the signed-in admin. RLS limits every query to their own rows. */
-export const researchContext = cache(async () => {
-  const { supabase, user } = await requireAdmin();
-  return { supabase, user };
-});
+/** Session client for the signed-in researcher. RLS limits every query to their own rows. */
+export const researchContext = requireResearcher;
 
 export const getLogs = cache(async (): Promise<LogRecord[]> => {
   const { supabase } = await researchContext();

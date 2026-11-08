@@ -13,7 +13,7 @@ import {
   saveStep,
   saveWeekly,
   updateQuestion,
-} from "@/app/admin/(panel)/research/actions";
+} from "@/app/research/actions";
 import { Feedback, PrivacyHint, ScorePicker } from "@/components/research/bits";
 import { useSave } from "@/components/research/use-save";
 import { Button } from "@/components/ui/button";

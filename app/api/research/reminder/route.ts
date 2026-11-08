@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     const email = u.user?.email;
     if (!email) continue;
 
-    const base = `${siteConfig.url}/admin/research`;
+    const base = `${siteConfig.url}/research`;
     const lines = [
       !loggedToday && `• Write today's log (5–10 minutes): ${base}/log/${today}`,
       friday && `• Friday review is drafted and waiting: ${base}/week?w=${weekStart(today)}`,

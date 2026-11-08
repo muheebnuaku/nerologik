@@ -2,12 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Admin-only middleware: refreshes the Supabase session cookie and sends
- * signed-out visitors to the login page. Admin membership itself is checked
- * in the admin layout/pages (and enforced by RLS in the database).
+ * Refreshes the Supabase session for /admin and /research and sends
+ * signed-out visitors to the right login page (/admin/login or /rit).
+ * Admin / RIT membership is checked in the layouts and enforced by RLS.
  */
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
+  const research = request.nextUrl.pathname.startsWith("/research");
+  const loginPath = research ? "/rit" : "/admin/login";
   const isLogin = request.nextUrl.pathname === "/admin/login";
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -16,7 +18,7 @@ export async function middleware(request: NextRequest) {
     // Supabase isn't configured on this deployment: show the login page's setup message.
     if (isLogin) return response;
     const login = request.nextUrl.clone();
-    login.pathname = "/admin/login";
+    login.pathname = loginPath;
     login.search = "?error=config";
     return NextResponse.redirect(login);
   }
@@ -38,7 +40,7 @@ export async function middleware(request: NextRequest) {
 
   if (!user && !isLogin) {
     const login = request.nextUrl.clone();
-    login.pathname = "/admin/login";
+    login.pathname = loginPath;
     login.search = "";
     return NextResponse.redirect(login);
   }
@@ -47,5 +49,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/admin"],
+  matcher: ["/admin/:path*", "/admin", "/research/:path*", "/research"],
 };

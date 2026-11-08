@@ -31,17 +31,17 @@ export default async function LogDayPage({ params, searchParams }: Props) {
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link href="/admin/research/log" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+        <Link href="/research/log" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" aria-hidden="true" /> All logs
         </Link>
         <div className="flex items-center gap-1">
           {prev && (
-            <Link href={`/admin/research/log/${prev}${q}`} className="flex items-center rounded-lg px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">
+            <Link href={`/research/log/${prev}${q}`} className="flex items-center rounded-lg px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">
               <ChevronLeft className="size-4" /> {formatDay(prev)}
             </Link>
           )}
           {next && (
-            <Link href={`/admin/research/log/${next}${q}`} className="flex items-center rounded-lg px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">
+            <Link href={`/research/log/${next}${q}`} className="flex items-center rounded-lg px-2 py-1 text-sm text-muted-foreground hover:bg-accent hover:text-foreground">
               {formatDay(next)} <ChevronRight className="size-4" />
             </Link>
           )}

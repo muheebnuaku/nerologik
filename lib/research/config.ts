@@ -6,7 +6,7 @@ import { findSensitive } from "./privacy";
 export const study = {
   title: "DMCE Observation",
   unit: "Debt Management, Compliance and Enforcement",
-  start: "2026-11-10",
+  start: "2026-11-09",
   end: "2026-11-30",
   /** End-of-month problem choice window. */
   chooseFrom: "2026-11-28",

@@ -51,7 +51,7 @@ export default async function WeekPage({ searchParams }: Props) {
         {weeks.map((wk, i) => (
           <Link
             key={wk}
-            href={`/admin/research/week?w=${wk}`}
+            href={`/research/week?w=${wk}`}
             aria-current={wk === monday ? "page" : undefined}
             className={cn("rounded-lg border px-3 py-1.5 text-sm", wk === monday ? "border-primary bg-brand-soft" : "border-border text-muted-foreground hover:text-foreground")}
           >
@@ -148,7 +148,7 @@ export default async function WeekPage({ searchParams }: Props) {
             <p className="mb-2 text-sm font-medium">3 questions for next week</p>
             <AddQuestionsButton questions={suggested} source="weekly" label="Add to my questions list" />
           </div>
-          <Link href={`/admin/research/compare?w=${monday}`} className="text-sm text-brand hover:underline">
+          <Link href={`/research/compare?w=${monday}`} className="text-sm text-brand hover:underline">
             Compare with teammate for this week →
           </Link>
         </section>

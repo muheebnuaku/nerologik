@@ -2,7 +2,9 @@
 
 import { usePathname } from "next/navigation";
 
-const isAdmin = (pathname: string | null) => pathname === "/admin" || !!pathname?.startsWith("/admin/");
+/** App areas with their own shell: no public navbar/footer. */
+const appAreas = ["/admin", "/research", "/rit"];
+const isAdmin = (pathname: string | null) => appAreas.some((a) => pathname === a || !!pathname?.startsWith(`${a}/`));
 
 /** Renders public-site chrome (navbar, footer) everywhere except the admin. */
 export function PublicOnly({ children }: { children: React.ReactNode }) {

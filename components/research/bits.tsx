@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AlertTriangle, Plus, X } from "lucide-react";
 
-import type { Result } from "@/app/admin/(panel)/research/actions";
+import type { Result } from "@/app/research/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { findSensitive } from "@/lib/research/privacy";

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, Loader2, Plus, Save, Trash2, X } from "lucide-react";
 
-import { deleteLog, saveLog } from "@/app/admin/(panel)/research/actions";
+import { deleteLog, saveLog } from "@/app/research/actions";
 import { Feedback, ListInput, PrivacyHint, ScorePicker } from "@/components/research/bits";
 import { useSave } from "@/components/research/use-save";
 import { Button } from "@/components/ui/button";
@@ -157,7 +157,7 @@ export function LogForm({ date, observer, initial, exists, knownTasks, previousT
             variant="ghost"
             className="ml-auto text-destructive"
             onClick={() => {
-              if (confirm("Delete this day's log?")) run(() => deleteLog(date, observer), (r) => r.ok && router.push("/admin/research/log"));
+              if (confirm("Delete this day's log?")) run(() => deleteLog(date, observer), (r) => r.ok && router.push("/research/log"));
             }}
           >
             <Trash2 /> Delete

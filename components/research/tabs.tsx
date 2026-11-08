@@ -6,13 +6,13 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: "/admin/research", label: "Overview", exact: true },
-  { href: "/admin/research/log", label: "Daily log" },
-  { href: "/admin/research/week", label: "Weekly review" },
-  { href: "/admin/research/map", label: "Process map" },
-  { href: "/admin/research/questions", label: "Questions" },
-  { href: "/admin/research/compare", label: "Teammate" },
-  { href: "/admin/research/problems", label: "Choose problem" },
+  { href: "/research", label: "Overview", exact: true },
+  { href: "/research/log", label: "Daily log" },
+  { href: "/research/week", label: "Weekly review" },
+  { href: "/research/map", label: "Process map" },
+  { href: "/research/questions", label: "Questions" },
+  { href: "/research/compare", label: "Teammate" },
+  { href: "/research/problems", label: "Choose problem" },
 ];
 
 export function ResearchTabs() {

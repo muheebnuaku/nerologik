@@ -21,11 +21,11 @@ export default async function ComparePage({ searchParams }: Props) {
   return (
     <>
       <nav aria-label="Range" className="flex flex-wrap gap-1.5">
-        <Link href="/admin/research/compare" className={cn("rounded-lg border px-3 py-1.5 text-sm", !w ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
+        <Link href="/research/compare" className={cn("rounded-lg border px-3 py-1.5 text-sm", !w ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
           Whole study
         </Link>
         {weeks.map((wk, i) => (
-          <Link key={wk} href={`/admin/research/compare?w=${wk}`} className={cn("rounded-lg border px-3 py-1.5 text-sm", w === wk ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
+          <Link key={wk} href={`/research/compare?w=${wk}`} className={cn("rounded-lg border px-3 py-1.5 text-sm", w === wk ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
             Week {i + 1}
             {wk === current ? " (now)" : ""}
           </Link>
@@ -35,7 +35,7 @@ export default async function ComparePage({ searchParams }: Props) {
       {!hasTeammate ? (
         <p className="rounded-xl border border-dashed border-border p-6 text-sm text-muted-foreground">
           No teammate logs yet. Ask your colleague to keep the same daily log, then add their entries from{" "}
-          <Link href="/admin/research/log" className="text-brand hover:underline">
+          <Link href="/research/log" className="text-brand hover:underline">
             Daily log → Teammate logs
           </Link>
           . This page then compares consistency, detail, and what each of you noticed that the other missed.

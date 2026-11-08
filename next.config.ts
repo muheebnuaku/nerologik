@@ -12,7 +12,12 @@ const nextConfig: NextConfig = {
   outputFileTracingRoot: projectRoot,
   async redirects() {
     // Work was merged into the Services page.
-    return [{ source: "/work", destination: "/services#work", permanent: true }];
+    return [
+      { source: "/work", destination: "/services#work", permanent: true },
+      // Research moved out of the admin so RIT members can use it.
+      { source: "/admin/research/:path*", destination: "/research/:path*", permanent: false },
+      { source: "/admin/research", destination: "/research", permanent: false },
+    ];
   },
   images: {
     // Images uploaded to Supabase Storage (admin dashboard)

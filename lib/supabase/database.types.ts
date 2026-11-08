@@ -180,6 +180,10 @@ export type Database = {
           | "email_sent_at" | "email_error" | "status" | "notes"
         >
       >;
+      rit_members: Table<
+        { user_id: string; created_at: string; name: string; phone: string },
+        { user_id: string; created_at?: string; name: string; phone: string }
+      >;
       research_logs: Table<ResearchLogRow, OwnedInsert<ResearchLogRow, "observer" | "pain_score" | "entry">>;
       research_process_steps: Table<
         ResearchStepRow,
@@ -212,7 +216,10 @@ export type Database = {
       >;
     };
     Views: { [_ in never]: never };
-    Functions: { is_admin: { Args: Record<string, never>; Returns: boolean } };
+    Functions: {
+      is_admin: { Args: Record<string, never>; Returns: boolean };
+      is_rit_member: { Args: Record<string, never>; Returns: boolean };
+    };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
   };

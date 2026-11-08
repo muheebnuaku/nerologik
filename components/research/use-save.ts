@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 
-import type { Result } from "@/app/admin/(panel)/research/actions";
+import type { Result } from "@/app/research/actions";
 
 /** Runs a server action and keeps its latest result for inline feedback. */
 export function useSave() {

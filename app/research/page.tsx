@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck, Flame, ListChecks, MessageCircleQuestion } from "lucide-react";
+import { ArrowRight, CalendarCheck, Flame, ListChecks, MessageCircleQuestion, Plus } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 
 import { candidates, cluster, formatDay, itemsOf, nextActions, todayAccra, total, workingDays } from "@/lib/research/analysis";
 import { study, toolOptions } from "@/lib/research/config";
@@ -13,6 +15,8 @@ export default async function ResearchOverview() {
   const mine = logs.filter((l) => l.observer === "me");
   const today = todayAccra();
   const days = workingDays();
+  // Working days plus any extra dates you've logged (weekends, before/after the study).
+  const calendarDays = [...new Set([...days, ...mine.map((l) => l.date)])].sort();
   const byDate = new Map(mine.map((l) => [l.date, l]));
   const due = days.filter((d) => d <= today);
   const actions = nextActions(logs, today);
@@ -64,12 +68,31 @@ export default async function ResearchOverview() {
 
       {/* Calendar: every working day of the study, with pain bars */}
       <section className="rounded-xl border border-border bg-card p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-semibold">Observation calendar</h2>
-          <span className="text-xs text-muted-foreground">Bar height = pain score</span>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold">Observation calendar</h2>
+            <span className="text-xs text-muted-foreground">Bar height = pain score</span>
+          </div>
+          <form action="/research/log/go" className="flex items-center gap-2">
+            <label htmlFor="log-date" className="sr-only">
+              Date to log
+            </label>
+            <input
+              id="log-date"
+              name="d"
+              type="date"
+              required
+              defaultValue={today}
+              max={today}
+              className="h-9 rounded-lg border border-input bg-background px-2.5 text-sm"
+            />
+            <Button type="submit" size="sm">
+              <Plus /> Add log
+            </Button>
+          </form>
         </div>
         <ol className="grid grid-cols-5 gap-2">
-          {days.map((d) => {
+          {calendarDays.map((d) => {
             const log = byDate.get(d);
             const past = d < today;
             const isToday = d === today;
@@ -77,7 +100,7 @@ export default async function ResearchOverview() {
             return (
               <li key={d}>
                 <Link
-                  href={`/admin/research/log/${d}`}
+                  href={`/research/log/${d}`}
                   className={cn(
                     "flex h-20 flex-col justify-between rounded-lg border p-2 text-xs transition-colors hover:border-brand/40",
                     log ? "border-primary/40 bg-brand-soft" : past ? "border-destructive/40 bg-destructive/5" : "border-border",
@@ -138,7 +161,7 @@ export default async function ResearchOverview() {
         <section className="rounded-xl border border-border bg-card p-4">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="font-semibold">Leading problems</h2>
-            <Link href="/admin/research/problems" className="text-xs text-brand hover:underline">
+            <Link href="/research/problems" className="text-xs text-brand hover:underline">
               Score all
             </Link>
           </div>
