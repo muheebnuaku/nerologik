@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 
 import { Footer } from "@/components/layout/footer";
 import { Navbar } from "@/components/layout/navbar";
+import { MainShell, PublicOnly } from "@/components/layout/site-chrome";
 import { Providers } from "@/components/providers";
 import { siteConfig } from "@/lib/site-config";
 import "./globals.css";
@@ -60,11 +61,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           >
             Skip to content
           </a>
-          <Navbar />
-          <main id="main" className="flex-1 pt-(--spacing-nav)">
-            {children}
-          </main>
-          <Footer />
+          <PublicOnly>
+            <Navbar />
+          </PublicOnly>
+          <MainShell>{children}</MainShell>
+          <PublicOnly>
+            <Footer />
+          </PublicOnly>
         </Providers>
       </body>
     </html>

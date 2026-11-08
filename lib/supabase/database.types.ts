@@ -70,6 +70,34 @@ type LeadRow = Timestamps & {
   notes: string | null;
 };
 
+export type AnalysisRow = Timestamps & {
+  id: string;
+  contact_name: string;
+  email: string;
+  phone: string | null;
+  business_name: string;
+  industry: string;
+  city: string;
+  country: string;
+  monthly_customers: string;
+  walk_in_pct: number;
+  budget: string;
+  answers: Json;
+  report: Json;
+  engine: "ai" | "rules";
+  model: string | null;
+  recommended_service: string;
+  currency: "GHS" | "USD";
+  estimate_min: number;
+  estimate_max: number;
+  monthly_min: number;
+  monthly_max: number;
+  email_sent_at: string | null;
+  email_error: string | null;
+  status: LeadStatus;
+  notes: string | null;
+};
+
 type SubscriberRow = {
   id: string;
   created_at: string;
@@ -100,6 +128,14 @@ export type Database = {
         InsertOf<
           Pick<LeadRow, "name" | "email" | "company" | "service" | "budget" | "message" | "source">,
           "company" | "source"
+        >
+      >;
+      business_analyses: Table<
+        AnalysisRow,
+        InsertOf<
+          AnalysisRow,
+          | Defaults | "phone" | "model" | "monthly_min" | "monthly_max"
+          | "email_sent_at" | "email_error" | "status" | "notes"
         >
       >;
       newsletter_subscribers: Table<SubscriberRow, { email: string; source?: string | null }>;

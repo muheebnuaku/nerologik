@@ -37,6 +37,7 @@ export const siteConfig = {
 export const mainNav: NavItem[] = [
   { title: "Home", href: "/" },
   { title: "Services", href: "/services" },
+  { title: "AI Analyser", href: "/analyzer" },
   { title: "About", href: "/about" },
   { title: "Insights", href: "/blog" },
   { title: "Contact", href: "/contact" },
@@ -54,6 +55,7 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
     items: [
       { title: "Home", href: "/" },
       { title: "Our work", href: "/services#work" },
+      { title: "Free AI analyser", href: "/analyzer" },
       { title: "About", href: "/about" },
       { title: "Insights", href: "/blog" },
       { title: "Contact", href: "/contact" },
