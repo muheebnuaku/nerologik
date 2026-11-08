@@ -20,13 +20,13 @@ export default async function LogListPage() {
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-2">
-        <Button asChild>
+      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+        <Button asChild className="h-11 sm:h-10">
           <Link href={`/research/log/${today}`}>
             <PenLine /> {mine.has(today) ? "Edit today's log" : "Write today's log"}
           </Link>
         </Button>
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="h-11 sm:h-10">
           <a href="/research/export" download>
             <Download /> Export my notes
           </a>
@@ -43,12 +43,12 @@ export default async function LogListPage() {
             const status = l ? "logged" : d < today ? "missed" : d === today ? "today" : "upcoming";
             return (
               <li key={d} className="flex items-center hover:bg-accent">
-                <Link href={`/research/log/${d}`} className="flex min-w-0 flex-1 items-center gap-3 px-4 py-2.5">
-                  <span className="w-28 shrink-0 text-sm font-medium">{formatDay(d)}</span>
+                <Link href={`/research/log/${d}`} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 px-4 py-2.5">
+                  <span className="w-24 shrink-0 text-sm font-medium sm:w-28">{formatDay(d)}</span>
                   <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
                     {e ? e.painTask || e.tasksDid[0]?.task || `${items} notes` : ""}
                   </span>
-                  {e?.painScore ? <span className="text-xs tabular-nums text-muted-foreground">pain {e.painScore}/5</span> : null}
+                  {e?.painScore ? <span className="hidden text-xs tabular-nums text-muted-foreground sm:inline">pain {e.painScore}/5</span> : null}
                   <span
                     className={cn(
                       "rounded-md px-2 py-0.5 text-xs",
@@ -95,10 +95,10 @@ export default async function LogListPage() {
             })}
           </ul>
         )}
-        <form action="/research/log/go" className="flex flex-wrap items-end gap-2">
-          <Input name="o" required maxLength={60} placeholder="Teammate's first name" className="h-10 w-48 px-3" aria-label="Teammate" />
-          <Input name="d" type="date" required defaultValue={today} className="h-10 w-44 px-3" aria-label="Date" />
-          <Button type="submit" variant="outline">
+        <form action="/research/log/go" className="grid gap-2 sm:flex sm:flex-wrap sm:items-end">
+          <Input name="o" required maxLength={60} placeholder="Teammate's first name" className="h-11 px-3 sm:h-10 sm:w-48" aria-label="Teammate" />
+          <Input name="d" type="date" required defaultValue={today} className="h-11 px-3 sm:h-10 sm:w-44" aria-label="Date" />
+          <Button type="submit" variant="outline" className="h-11 sm:h-10">
             <UserPlus /> Add their log
           </Button>
         </form>

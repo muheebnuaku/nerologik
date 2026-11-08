@@ -176,9 +176,16 @@ export function QuestionRow({ q }: { q: Question }) {
           type="button"
           onClick={() => run(() => updateQuestion(q.id, q.status === "answered" ? "open" : "answered", answer))}
           aria-label={q.status === "answered" ? "Mark as open" : "Mark as answered"}
-          className={cn("mt-0.5 flex size-5 shrink-0 items-center justify-center rounded border", q.status === "answered" ? "border-primary bg-primary text-primary-foreground" : "border-input")}
+          className="-m-2 flex size-9 shrink-0 items-center justify-center rounded-lg hover:bg-accent"
         >
-          {q.status === "answered" && <Check className="size-3.5" />}
+          <span
+            className={cn(
+              "flex size-5 items-center justify-center rounded border",
+              q.status === "answered" ? "border-primary bg-primary text-primary-foreground" : "border-input",
+            )}
+          >
+            {q.status === "answered" && <Check className="size-3.5" />}
+          </span>
         </button>
         <button type="button" onClick={() => setOpen((o) => !o)} className="flex-1 text-left">
           <span className={cn("text-sm", q.status === "answered" && "text-muted-foreground line-through")}>{q.question}</span>
@@ -419,9 +426,9 @@ export function AddCalendarDay({ today }: { today: string }) {
         e.preventDefault();
         run(() => addCalendarDay(date));
       }}
-      className="flex flex-col items-end gap-1"
+      className="flex w-full flex-col gap-1 sm:w-auto sm:items-end"
     >
-      <div className="flex items-center gap-2">
+      <div className="flex gap-2">
         <label htmlFor="calendar-date" className="sr-only">
           Date to add to the calendar
         </label>
@@ -431,9 +438,9 @@ export function AddCalendarDay({ today }: { today: string }) {
           required
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="h-9 rounded-lg border border-input bg-background px-2.5 text-sm"
+          className="h-11 min-w-0 flex-1 rounded-lg border border-input bg-background px-3 text-base sm:h-9 sm:w-40 sm:flex-none sm:text-sm"
         />
-        <Button type="submit" size="sm" disabled={pending || !date}>
+        <Button type="submit" disabled={pending || !date} className="h-11 shrink-0 sm:h-9">
           {pending ? <Loader2 className="animate-spin" /> : <CalendarPlus />} Add to calendar
         </Button>
       </div>
@@ -450,9 +457,9 @@ export function RemoveCalendarDay({ date }: { date: string }) {
       disabled={pending}
       onClick={() => confirm("Remove this date from your calendar?") && run(() => removeCalendarDay(date))}
       aria-label="Remove date from calendar"
-      className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-destructive"
+      className="flex size-9 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-destructive"
     >
-      {pending ? <Loader2 className="size-3.5 animate-spin" /> : <X className="size-3.5" />}
+      {pending ? <Loader2 className="size-4 animate-spin" /> : <X className="size-4" />}
     </button>
   );
 }

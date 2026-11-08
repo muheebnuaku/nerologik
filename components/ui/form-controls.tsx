@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const fieldBase =
-  "w-full min-w-0 rounded-lg border border-input bg-background px-3.5 text-sm text-foreground transition-[border-color] duration-(--duration-base) outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive";
+  "w-full min-w-0 rounded-lg border border-input bg-background px-3.5 text-base text-foreground sm:text-sm transition-[border-color] duration-(--duration-base) outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive";
 
 export function Label({ className, ...props }: React.ComponentProps<"label">) {
   return <label className={cn("text-sm font-medium", className)} {...props} />;

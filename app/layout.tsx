@@ -44,6 +44,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Lets fixed bars use env(safe-area-inset-*) on notched phones.
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#09090b" },
     { media: "(prefers-color-scheme: light)", color: "#fafafa" },

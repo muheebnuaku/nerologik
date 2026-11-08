@@ -20,12 +20,12 @@ export default async function ComparePage({ searchParams }: Props) {
 
   return (
     <>
-      <nav aria-label="Range" className="flex flex-wrap gap-1.5">
-        <Link href="/research/compare" className={cn("rounded-lg border px-3 py-1.5 text-sm", !w ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
+      <nav aria-label="Range" className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden">
+        <Link href="/research/compare" className={cn("flex min-h-10 shrink-0 items-center rounded-lg border px-3 text-sm whitespace-nowrap", !w ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
           Whole study
         </Link>
         {weeks.map((wk, i) => (
-          <Link key={wk} href={`/research/compare?w=${wk}`} className={cn("rounded-lg border px-3 py-1.5 text-sm", w === wk ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
+          <Link key={wk} href={`/research/compare?w=${wk}`} className={cn("flex min-h-10 shrink-0 items-center rounded-lg border px-3 text-sm whitespace-nowrap", w === wk ? "border-primary bg-brand-soft" : "border-border text-muted-foreground")}>
             Week {i + 1}
             {wk === current ? " (now)" : ""}
           </Link>

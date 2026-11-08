@@ -47,13 +47,13 @@ export default async function WeekPage({ searchParams }: Props) {
 
   return (
     <>
-      <nav aria-label="Weeks" className="flex flex-wrap gap-1.5">
+      <nav aria-label="Weeks" className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 [&::-webkit-scrollbar]:hidden">
         {weeks.map((wk, i) => (
           <Link
             key={wk}
             href={`/research/week?w=${wk}`}
             aria-current={wk === monday ? "page" : undefined}
-            className={cn("rounded-lg border px-3 py-1.5 text-sm", wk === monday ? "border-primary bg-brand-soft" : "border-border text-muted-foreground hover:text-foreground")}
+            className={cn("flex min-h-10 shrink-0 items-center rounded-lg border px-3 text-sm whitespace-nowrap", wk === monday ? "border-primary bg-brand-soft" : "border-border text-muted-foreground hover:text-foreground")}
           >
             Week {i + 1} · {formatDay(wk)}
           </Link>

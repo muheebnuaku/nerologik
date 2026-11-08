@@ -58,9 +58,14 @@ export function ListInput({
       {value.length > 0 && (
         <ul className="flex flex-col gap-1.5">
           {value.map((v, i) => (
-            <li key={`${v}-${i}`} className="flex items-start gap-2 rounded-lg border border-border bg-background px-3 py-1.5 text-sm">
-              <span className="flex-1">{v}</span>
-              <button type="button" onClick={() => onChange(value.filter((_, k) => k !== i))} aria-label={`Remove ${v}`} className="text-muted-foreground hover:text-destructive">
+            <li key={`${v}-${i}`} className="flex items-center gap-2 rounded-lg border border-border bg-background py-1 pr-1 pl-3 text-sm">
+              <span className="min-w-0 flex-1 break-words py-1">{v}</span>
+              <button
+                type="button"
+                onClick={() => onChange(value.filter((_, k) => k !== i))}
+                aria-label={`Remove ${v}`}
+                className="flex size-9 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-destructive"
+              >
                 <X className="size-4" />
               </button>
             </li>
@@ -79,9 +84,10 @@ export function ListInput({
             }
           }}
           placeholder={placeholder}
-          className="h-10 px-3"
+          enterKeyHint="done"
+          className="h-11 px-3"
         />
-        <Button type="button" variant="outline" size="icon" onClick={() => add()} aria-label="Add">
+        <Button type="button" variant="outline" size="icon" onClick={() => add()} aria-label="Add" className="size-11 shrink-0">
           <Plus />
         </Button>
       </div>
@@ -89,7 +95,7 @@ export function ListInput({
       {unused.length > 0 && (
         <div className="flex flex-wrap gap-1.5">
           {unused.map((s) => (
-            <button key={s} type="button" onClick={() => add(s)} className="rounded-md border border-dashed border-border px-2 py-0.5 text-xs text-muted-foreground hover:border-brand/40 hover:text-foreground">
+            <button key={s} type="button" onClick={() => add(s)} className="min-h-9 rounded-lg border border-dashed border-border px-2.5 text-xs text-muted-foreground hover:border-brand/40 hover:text-foreground">
               + {s}
             </button>
           ))}
@@ -101,7 +107,7 @@ export function ListInput({
 
 export function ScorePicker({ value, onChange, label }: { value: number | null; onChange: (v: number | null) => void; label: string }) {
   return (
-    <div role="radiogroup" aria-label={label} className="flex gap-1">
+    <div role="radiogroup" aria-label={label} className="flex gap-1.5">
       {[1, 2, 3, 4, 5].map((n) => (
         <button
           key={n}
@@ -110,7 +116,7 @@ export function ScorePicker({ value, onChange, label }: { value: number | null; 
           aria-checked={value === n}
           onClick={() => onChange(value === n ? null : n)}
           className={cn(
-            "size-8 rounded-md border text-sm font-medium tabular-nums transition-colors",
+            "size-11 rounded-lg border text-base font-medium tabular-nums transition-[background-color,border-color,transform] active:scale-95 sm:size-9 sm:text-sm",
             value === n ? "border-primary bg-primary text-primary-foreground" : "border-input hover:border-brand/40",
           )}
         >

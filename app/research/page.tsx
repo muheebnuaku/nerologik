@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck, Flame, ListChecks, MessageCircleQuestion } from "lucide-react";
+import { ArrowRight, CalendarCheck, CheckCircle2, ClipboardList, Flame, ListChecks, MessageCircleQuestion } from "lucide-react";
 
-import { AddCalendarDay, RemoveCalendarDay } from "@/components/research/editors";
-
-import { candidates, cluster, formatDay, itemsOf, nextActions, todayAccra, total, workingDays } from "@/lib/research/analysis";
+import { ObservationCalendar } from "@/components/research/calendar";
+import { AddCalendarDay } from "@/components/research/editors";
+import { Button } from "@/components/ui/button";
+import { candidates, cluster, formatDay, isWorkingDay, itemsOf, nextActions, todayAccra, total, workingDays } from "@/lib/research/analysis";
 import { study, toolOptions } from "@/lib/research/config";
 import { getCustomDays, getLogs, getQuestions } from "@/lib/research/data";
 import { cn } from "@/lib/utils";
@@ -15,12 +16,13 @@ export default async function ResearchOverview() {
   const mine = logs.filter((l) => l.observer === "me");
   const today = todayAccra();
   const days = workingDays();
-  // Study working days, plus dates you added to the calendar or logged.
   const added = new Set(customDays);
-  const calendarDays = [...new Set([...days, ...customDays, ...mine.map((l) => l.date)])].sort();
-  const byDate = new Map(mine.map((l) => [l.date, l]));
-  const due = [...new Set([...days, ...customDays])].filter((d) => d <= today);
-  const actions = nextActions(logs, today, customDays);
+  const scheduled = new Set([...days, ...customDays]);
+  const logged = new Map(mine.map((l) => [l.date, l.entry.painScore ?? 0]));
+  const due = [...scheduled].filter((d) => d <= today);
+  const todaysLog = mine.find((l) => l.date === today);
+  const todayScheduled = scheduled.has(today);
+  const actions = nextActions(logs, today, customDays).filter((a) => !a.href.endsWith(`/log/${today}`));
 
   const pains = mine.map((l) => l.entry.painScore).filter((p): p is number => p != null);
   const topTasks = cluster(itemsOf(mine, ["task", "seen"])).sort((a, b) => b.days.length - a.days.length).slice(0, 5);
@@ -28,27 +30,58 @@ export default async function ResearchOverview() {
     .map((t) => ({ label: t.label, n: mine.filter((l) => l.entry.tools.includes(t.value)).length }))
     .filter((t) => t.n)
     .sort((a, b) => b.n - a.n);
-  const leading = candidates(logs).slice(0, 3);
+  const allCandidates = candidates(logs);
   const openQs = questions.filter((q) => q.status !== "answered").length;
 
   const stats = [
-    { icon: CalendarCheck, label: "Days logged", value: `${due.filter((d) => byDate.has(d)).length}/${due.length || days.length}` },
-    { icon: Flame, label: "Average pain", value: pains.length ? (pains.reduce((a, b) => a + b, 0) / pains.length).toFixed(1) : "—" },
-    { icon: ListChecks, label: "Candidate problems", value: candidates(logs).length },
+    { icon: CalendarCheck, label: "Days logged", value: `${due.filter((d) => logged.has(d)).length}/${due.length || days.length}` },
+    { icon: Flame, label: "Avg pain", value: pains.length ? (pains.reduce((a, b) => a + b, 0) / pains.length).toFixed(1) : "—" },
+    { icon: ListChecks, label: "Problems found", value: allCandidates.length },
     { icon: MessageCircleQuestion, label: "Open questions", value: openQs },
   ];
 
   return (
     <>
+      {/* Today */}
+      <section
+        className={cn(
+          "flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5",
+          todaysLog ? "border-primary/40 bg-brand-soft" : "border-primary/60 bg-card",
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <span className={cn("flex size-11 shrink-0 items-center justify-center rounded-xl", todaysLog ? "bg-primary text-primary-foreground" : "bg-brand-soft text-brand")}>
+            {todaysLog ? <CheckCircle2 className="size-5" aria-hidden="true" /> : <ClipboardList className="size-5" aria-hidden="true" />}
+          </span>
+          <div>
+            <p className="text-xs text-muted-foreground">Today · {formatDay(today)}</p>
+            <p className="font-semibold">
+              {todaysLog
+                ? "Today's log is saved"
+                : today < study.start
+                  ? `Observation starts ${formatDay(study.start)}`
+                  : todayScheduled || isWorkingDay(today)
+                    ? "Write today's log, 5 minutes"
+                    : "No observation scheduled today"}
+            </p>
+          </div>
+        </div>
+        <Button asChild size="lg" variant={todaysLog ? "outline" : "default"} className="w-full sm:w-auto">
+          <Link href={`/research/log/${today}`}>
+            {todaysLog ? "Edit today's log" : "Write today's log"} <ArrowRight />
+          </Link>
+        </Button>
+      </section>
+
       {actions.length > 0 && (
-        <section className="flex flex-col gap-2">
+        <section className="flex flex-col gap-2" aria-label="Next steps">
           {actions.map((a) => (
             <Link
               key={a.href + a.label}
               href={a.href}
               className={cn(
-                "flex items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm transition-colors",
-                a.tone === "primary" ? "border-primary/50 bg-brand-soft font-medium hover:border-primary" : "border-border bg-card hover:border-brand/40",
+                "flex min-h-12 items-center justify-between gap-3 rounded-xl border px-4 py-3 text-sm transition-colors active:scale-[0.99]",
+                a.tone === "primary" ? "border-primary/50 bg-brand-soft font-medium" : "border-border bg-card hover:border-brand/40",
               )}
             >
               {a.label} <ArrowRight className="size-4 shrink-0 text-brand" aria-hidden="true" />
@@ -57,69 +90,40 @@ export default async function ResearchOverview() {
         </section>
       )}
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3 lg:grid-cols-4">
         {stats.map((s) => (
-          <div key={s.label} className="flex flex-col gap-1.5 rounded-xl border border-border bg-card p-4">
-            <s.icon className="size-4 text-brand" aria-hidden="true" />
-            <span className="font-display text-2xl font-semibold tabular-nums">{s.value}</span>
-            <span className="text-xs text-muted-foreground">{s.label}</span>
+          <div key={s.label} className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 sm:flex-col sm:items-start sm:gap-1.5 sm:p-4">
+            <s.icon className="size-4 shrink-0 text-brand" aria-hidden="true" />
+            <div className="min-w-0">
+              <p className="font-display text-xl font-semibold tabular-nums sm:text-2xl">{s.value}</p>
+              <p className="truncate text-xs text-muted-foreground">{s.label}</p>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Calendar: every working day of the study, with pain bars */}
-      <section className="rounded-xl border border-border bg-card p-4">
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <div>
+      {/* Calendar */}
+      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-3 sm:p-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="px-1">
             <h2 className="font-semibold">Observation calendar</h2>
-            <span className="text-xs text-muted-foreground">Bar height = pain score</span>
+            <p className="text-xs text-muted-foreground">
+              {formatDay(study.start)} – {formatDay(study.end)} · tap a day to log it
+            </p>
           </div>
           <AddCalendarDay today={today} />
         </div>
-        <ol className="grid grid-cols-5 gap-2">
-          {calendarDays.map((d) => {
-            const log = byDate.get(d);
-            const past = d < today;
-            const isToday = d === today;
-            const pain = log?.entry.painScore ?? 0;
-            return (
-              <li key={d} className="relative">
-                <Link
-                  href={`/research/log/${d}`}
-                  className={cn(
-                    "flex h-20 flex-col justify-between rounded-lg border p-2 text-xs transition-colors hover:border-brand/40",
-                    log ? "border-primary/40 bg-brand-soft" : past ? "border-destructive/40 bg-destructive/5" : "border-border",
-                    isToday && "ring-2 ring-primary",
-                  )}
-                  aria-label={`${formatDay(d)}: ${log ? `logged, pain ${pain || "not set"}` : past ? "missed" : "upcoming"}`}
-                >
-                  <span className={cn(!log && !past && "text-muted-foreground")}>{formatDay(d)}</span>
-                  <span className="flex items-end gap-1">
-                    <span className="h-7 w-2 overflow-hidden rounded-sm bg-secondary">
-                      <span className="block w-full rounded-sm bg-primary" style={{ height: `${pain * 20}%`, marginTop: `${100 - pain * 20}%` }} />
-                    </span>
-                    <span className="text-muted-foreground">{log ? (pain ? `${pain}/5` : "✓") : past ? "missed" : added.has(d) ? "added" : ""}</span>
-                  </span>
-                </Link>
-                {added.has(d) && !log && (
-                  <span className="absolute top-1 right-1">
-                    <RemoveCalendarDay date={d} />
-                  </span>
-                )}
-              </li>
-            );
-          })}
-        </ol>
+        <ObservationCalendar today={today} scheduled={scheduled} added={added} logged={logged} />
       </section>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        <section className="rounded-xl border border-border bg-card p-4">
+      <div className="grid gap-3 lg:grid-cols-3">
+        <section className="rounded-2xl border border-border bg-card p-4">
           <h2 className="mb-2 font-semibold">Most frequent tasks</h2>
           {topTasks.length ? (
-            <ul className="flex flex-col gap-1.5 text-sm">
+            <ul className="flex flex-col gap-2 text-sm">
               {topTasks.map((t) => (
                 <li key={t.key} className="flex justify-between gap-2">
-                  <span className="truncate">{t.label}</span>
+                  <span className="min-w-0 truncate">{t.label}</span>
                   <span className="shrink-0 text-muted-foreground tabular-nums">{t.days.length}d</span>
                 </li>
               ))}
@@ -129,10 +133,10 @@ export default async function ResearchOverview() {
           )}
         </section>
 
-        <section className="rounded-xl border border-border bg-card p-4">
+        <section className="rounded-2xl border border-border bg-card p-4">
           <h2 className="mb-2 font-semibold">Tools the unit relies on</h2>
           {toolCounts.length ? (
-            <ul className="flex flex-col gap-1.5 text-sm">
+            <ul className="flex flex-col gap-2 text-sm">
               {toolCounts.map((t) => (
                 <li key={t.label} className="flex items-center gap-2">
                   <span className="w-28 shrink-0 truncate">{t.label}</span>
@@ -148,18 +152,18 @@ export default async function ResearchOverview() {
           )}
         </section>
 
-        <section className="rounded-xl border border-border bg-card p-4">
+        <section className="rounded-2xl border border-border bg-card p-4">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="font-semibold">Leading problems</h2>
-            <Link href="/research/problems" className="text-xs text-brand hover:underline">
+            <Link href="/research/problems" className="py-1 text-xs text-brand hover:underline">
               Score all
             </Link>
           </div>
-          {leading.length ? (
-            <ol className="flex flex-col gap-1.5 text-sm">
-              {leading.map((c, i) => (
+          {allCandidates.length ? (
+            <ol className="flex flex-col gap-2 text-sm">
+              {allCandidates.slice(0, 3).map((c, i) => (
                 <li key={c.key} className="flex justify-between gap-2">
-                  <span className="truncate">
+                  <span className="min-w-0 truncate">
                     {i + 1}. {c.title}
                   </span>
                   <span className="shrink-0 text-muted-foreground tabular-nums">{total(c.auto)}/20</span>
@@ -172,8 +176,8 @@ export default async function ResearchOverview() {
         </section>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Problem choice opens {formatDay(study.chooseFrom)}. Everything here is calculated from your own logs; nothing is sent to AI tools.
+      <p className="px-1 text-xs text-muted-foreground">
+        Problem choice opens {formatDay(study.chooseFrom)}. Everything is calculated from your own logs; nothing is sent to AI tools.
       </p>
     </>
   );

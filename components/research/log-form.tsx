@@ -47,6 +47,18 @@ export function LogForm({ date, observer, initial, exists, knownTasks, previousT
   };
 
   const validation = useMemo(() => logEntrySchema.safeParse(e), [e]);
+  const filled = [
+    e.tasksDid.length,
+    e.tasksSaw.length,
+    e.tools.length,
+    e.delays.length,
+    e.repeated.length,
+    e.mistakes.length,
+    e.questions.length,
+    e.complaints.length,
+    e.learned.trim().length,
+    e.painScore,
+  ].filter(Boolean).length;
   const problem = validation.success ? null : validation.error.issues[0];
 
   // Autosave 2s after the last change (only when valid). Keeps the 5-minute habit frictionless.
@@ -76,8 +88,18 @@ export function LogForm({ date, observer, initial, exists, knownTasks, previousT
         ev.preventDefault();
         run(() => saveLog(date, observer, e), (r) => r.ok && setDirty(false));
       }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-3 sm:gap-4"
     >
+      <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-4 py-3">
+        <div className="flex-1">
+          <p className="text-sm font-medium">{filled} of 10 answered</p>
+          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary" aria-hidden="true">
+            <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${filled * 10}%` }} />
+          </div>
+        </div>
+        <span className="text-xs text-muted-foreground">Skip what didn&apos;t happen</span>
+      </div>
+
       <Section n={1} title="Tasks I did today" hint="What, how many items (notices, files, calls), roughly how long.">
         <TaskList value={e.tasksDid} onChange={(v) => set("tasksDid", v)} suggestions={knownTasks} />
       </Section>
@@ -98,7 +120,7 @@ export function LogForm({ date, observer, initial, exists, knownTasks, previousT
                 aria-checked={on}
                 onClick={() => set("tools", on ? e.tools.filter((x) => x !== t.value) : [...e.tools, t.value])}
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm transition-colors",
+                  "inline-flex min-h-11 items-center gap-1.5 rounded-lg border px-3.5 text-sm transition-[background-color,border-color,transform] active:scale-95 sm:min-h-9",
                   on ? "border-primary bg-brand-soft" : "border-input hover:border-brand/40",
                 )}
               >
@@ -113,13 +135,13 @@ export function LogForm({ date, observer, initial, exists, knownTasks, previousT
             {e.tools.includes("gra-system") && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="systemName">Internal system name (if known)</Label>
-                <Input id="systemName" value={e.systemName} onChange={(ev) => set("systemName", ev.target.value)} className="h-10 px-3" />
+                <Input id="systemName" value={e.systemName} onChange={(ev) => set("systemName", ev.target.value)} className="h-11 px-3" />
               </div>
             )}
             {e.tools.includes("other") && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="toolsOther">Other tools</Label>
-                <Input id="toolsOther" value={e.toolsOther} onChange={(ev) => set("toolsOther", ev.target.value)} className="h-10 px-3" />
+                <Input id="toolsOther" value={e.toolsOther} onChange={(ev) => set("toolsOther", ev.target.value)} className="h-11 px-3" />
               </div>
             )}
           </div>
@@ -139,42 +161,52 @@ export function LogForm({ date, observer, initial, exists, knownTasks, previousT
 
       <Section n={10} title="Pain score" hint="Today's most painful task, from 1 (minor) to 5 (wastes hours).">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <Input value={e.painTask} onChange={(ev) => set("painTask", ev.target.value)} placeholder="The most painful task today" className="h-10 flex-1 px-3" aria-label="Most painful task" />
-          <ScorePicker label="Pain score" value={e.painScore} onChange={(v) => set("painScore", v)} />
+          <Input value={e.painTask} onChange={(ev) => set("painTask", ev.target.value)} placeholder="The most painful task today" className="h-11 flex-1 px-3" aria-label="Most painful task" />
+          <div className="flex flex-col gap-1">
+            <ScorePicker label="Pain score" value={e.painScore} onChange={(v) => set("painScore", v)} />
+            <div className="flex justify-between text-[0.6875rem] text-muted-foreground">
+              <span>minor</span>
+              <span>wastes hours</span>
+            </div>
+          </div>
         </div>
         <PrivacyHint text={e.painTask} />
       </Section>
 
-      <div className="sticky bottom-0 z-10 -mx-1 flex flex-wrap items-center gap-3 border-t border-border bg-background/95 px-1 py-3 backdrop-blur">
-        <Button type="submit" disabled={pending || !!problem}>
+      <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 -mx-4 flex flex-wrap items-center gap-x-3 gap-y-1 border-y border-border bg-background/95 px-4 py-2.5 backdrop-blur-xl sm:-mx-1 sm:px-1 md:bottom-0 md:border-b-0">
+        <Button type="submit" disabled={pending || !!problem} className="h-11 flex-1 sm:h-10 sm:flex-none">
           {pending ? <Loader2 className="animate-spin" /> : <Save />} Save log
         </Button>
-        <span className="text-xs text-muted-foreground">{problem ? problem.message : dirty ? "Unsaved changes, autosaving…" : exists || result?.ok ? "All changes saved" : "Autosaves as you type"}</span>
-        <Feedback result={result} />
-        {exists && (
-          <Button
-            type="button"
-            variant="ghost"
-            className="ml-auto text-destructive"
-            onClick={() => {
-              if (confirm("Delete this day's log?")) run(() => deleteLog(date, observer), (r) => r.ok && router.push("/research/log"));
-            }}
-          >
-            <Trash2 /> Delete
-          </Button>
-        )}
+        <span className={cn("text-xs", problem ? "text-destructive" : "text-muted-foreground")} aria-live="polite">
+          {problem ? problem.message : dirty ? "Autosaving…" : exists || result?.ok ? "✓ All changes saved" : "Autosaves as you type"}
+        </span>
+        <Feedback result={result?.ok ? null : result} />
       </div>
+
+      {/* Kept away from the save bar so it can't be hit by accident. */}
+      {exists && (
+        <Button
+          type="button"
+          variant="ghost"
+          className="h-11 self-center text-destructive"
+          onClick={() => {
+            if (confirm("Delete this day's log? This can't be undone.")) run(() => deleteLog(date, observer), (r) => r.ok && router.push("/research/log"));
+          }}
+        >
+          <Trash2 /> Delete this log
+        </Button>
+      )}
     </form>
   );
 }
 
 function Section({ n, title, hint, children }: { n: number; title: string; hint: string; children: React.ReactNode }) {
   return (
-    <fieldset className="flex flex-col gap-2.5 rounded-xl border border-border bg-card p-4">
+    <fieldset className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-3.5 sm:p-4">
       <legend className="sr-only">{title}</legend>
       <div>
         <p className="font-medium">
-          <span className="mr-2 inline-flex size-5 items-center justify-center rounded-full bg-brand-soft text-xs text-brand">{n}</span>
+          <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-brand-soft text-xs font-semibold text-brand">{n}</span>
           {title}
         </p>
         <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
@@ -187,41 +219,65 @@ function Section({ n, title, hint, children }: { n: number; title: string; hint:
 function TaskList({ value, onChange, suggestions, withRole }: { value: TaskItem[]; onChange: (v: TaskItem[]) => void; suggestions: string[]; withRole?: boolean }) {
   const update = (i: number, patch: Partial<TaskItem>) => onChange(value.map((t, k) => (k === i ? { ...t, ...patch } : t)));
   const add = (task = "") => onChange([...value, { task, count: null, minutes: null, ...(withRole ? { role: "Officer" } : {}) }]);
-  const num = (v: string) => (v === "" ? null : Math.max(0, Math.min(100000, Math.round(Number(v)) || 0)));
   const unused = suggestions.filter((s) => !value.some((t) => t.task === s)).slice(0, 6);
 
   return (
     <div className="flex flex-col gap-2">
       {value.map((t, i) => (
-        <div key={i} className="flex flex-col gap-1">
-          <div className={cn("grid gap-2", withRole ? "sm:grid-cols-[minmax(0,1fr)_8rem_5.5rem_5.5rem_auto]" : "sm:grid-cols-[minmax(0,1fr)_5.5rem_5.5rem_auto]")}>
-            <Input value={t.task} onChange={(e) => update(i, { task: e.target.value })} placeholder="Task, e.g. Drafted third party notices" className="h-10 px-3" aria-label="Task" />
-            {withRole && (
-              <NativeSelect value={t.role ?? "Officer"} onChange={(e) => update(i, { role: e.target.value })} aria-label="Role" className="h-10">
-                {roleOptions.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </NativeSelect>
-            )}
-            <Input type="number" inputMode="numeric" min={0} value={t.count ?? ""} onChange={(e) => update(i, { count: num(e.target.value) })} placeholder="Items" className="h-10 px-3" aria-label="How many items" />
-            <Input type="number" inputMode="numeric" min={0} value={t.minutes ?? ""} onChange={(e) => update(i, { minutes: num(e.target.value) })} placeholder="Mins" className="h-10 px-3" aria-label="Roughly how many minutes" />
-            <Button type="button" variant="ghost" size="icon" onClick={() => onChange(value.filter((_, k) => k !== i))} aria-label="Remove task">
-              <X />
-            </Button>
+        <div key={i} className="flex flex-col gap-2 rounded-lg border border-border bg-background p-2.5 sm:border-0 sm:bg-transparent sm:p-0">
+          <div className={cn("grid gap-2", withRole ? "sm:grid-cols-[minmax(0,1fr)_8.5rem_6rem_6rem_auto]" : "sm:grid-cols-[minmax(0,1fr)_6rem_6rem_auto]")}>
+            <div className="flex gap-2 sm:contents">
+              <Input value={t.task} onChange={(e) => update(i, { task: e.target.value })} placeholder="e.g. Drafted third party notices" className="h-11 flex-1 px-3 sm:h-10" aria-label="Task" />
+              <Button type="button" variant="ghost" size="icon" onClick={() => onChange(value.filter((_, k) => k !== i))} aria-label="Remove task" className="size-11 shrink-0 sm:order-last sm:size-10">
+                <X />
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-2 sm:contents">
+              {withRole && (
+                // Own row on phones so "NSS personnel" / "Supervisor" never truncate.
+                <div className="col-span-2 sm:contents">
+                  <NativeSelect value={t.role ?? "Officer"} onChange={(e) => update(i, { role: e.target.value })} aria-label="Role" className="h-11 sm:h-10">
+                    {roleOptions.map((r) => (
+                      <option key={r}>{r}</option>
+                    ))}
+                  </NativeSelect>
+                </div>
+              )}
+              <NumberField label="items" a11y="How many items" value={t.count} onChange={(v) => update(i, { count: v })} />
+              <NumberField label="mins" a11y="Roughly how many minutes" value={t.minutes} onChange={(v) => update(i, { minutes: v })} />
+            </div>
           </div>
           <PrivacyHint text={t.task} />
         </div>
       ))}
       <div className="flex flex-wrap items-center gap-1.5">
-        <Button type="button" variant="outline" size="sm" onClick={() => add()}>
+        <Button type="button" variant="outline" onClick={() => add()} className="h-11 sm:h-9">
           <Plus /> Add task
         </Button>
         {unused.map((s) => (
-          <button key={s} type="button" onClick={() => add(s)} className="rounded-md border border-dashed border-border px-2 py-0.5 text-xs text-muted-foreground hover:border-brand/40 hover:text-foreground">
+          <button key={s} type="button" onClick={() => add(s)} className="min-h-9 rounded-lg border border-dashed border-border px-2.5 text-xs text-muted-foreground hover:border-brand/40 hover:text-foreground">
             + {s}
           </button>
         ))}
       </div>
     </div>
+  );
+}
+
+function NumberField({ label, a11y, value, onChange }: { label: string; a11y: string; value: number | null; onChange: (v: number | null) => void }) {
+  return (
+    <label className="relative block min-w-0">
+      <span className="sr-only">{a11y}</span>
+      <Input
+        type="number"
+        inputMode="numeric"
+        min={0}
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value === "" ? null : Math.max(0, Math.min(100000, Math.round(Number(e.target.value)) || 0)))}
+        placeholder="0"
+        className="h-11 pr-12 pl-3 sm:h-10"
+      />
+      <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-xs text-muted-foreground">{label}</span>
+    </label>
   );
 }
