@@ -98,6 +98,48 @@ export type AnalysisRow = Timestamps & {
   notes: string | null;
 };
 
+type Owned = Timestamps & { id: string; user_id: string };
+
+export type ResearchLogRow = Owned & {
+  log_date: string;
+  observer: string;
+  pain_score: number | null;
+  entry: Json;
+};
+
+export type ResearchStepRow = Owned & {
+  position: number;
+  title: string;
+  tool: string | null;
+  owner: string | null;
+  notes: string | null;
+  keywords: string[];
+};
+
+export type ResearchQuestionRow = Owned & {
+  question: string;
+  source: "guide" | "weekly" | "map" | "manual";
+  status: "open" | "asked" | "answered";
+  answer: string | null;
+};
+
+export type ResearchWeeklyRow = Owned & { week_start: string; notes: Json };
+
+export type ResearchCandidateRow = Owned & {
+  key: string;
+  title: string;
+  frequency: number | null;
+  pain: number | null;
+  buildable: number | null;
+  safe: number | null;
+  dismissed: boolean;
+  chosen: boolean;
+  summary: Json | null;
+};
+
+/** Owned rows: id, timestamps and user_id (defaults to auth.uid()) are optional on insert. */
+type OwnedInsert<Row extends Owned, Extra extends keyof Row = never> = InsertOf<Row, Defaults | "user_id" | Extra>;
+
 type SubscriberRow = {
   id: string;
   created_at: string;
@@ -137,6 +179,17 @@ export type Database = {
           | Defaults | "phone" | "model" | "monthly_min" | "monthly_max"
           | "email_sent_at" | "email_error" | "status" | "notes"
         >
+      >;
+      research_logs: Table<ResearchLogRow, OwnedInsert<ResearchLogRow, "observer" | "pain_score" | "entry">>;
+      research_process_steps: Table<
+        ResearchStepRow,
+        OwnedInsert<ResearchStepRow, "position" | "tool" | "owner" | "notes" | "keywords">
+      >;
+      research_questions: Table<ResearchQuestionRow, OwnedInsert<ResearchQuestionRow, "source" | "status" | "answer">>;
+      research_weekly_reviews: Table<ResearchWeeklyRow, OwnedInsert<ResearchWeeklyRow, "notes">>;
+      research_candidates: Table<
+        ResearchCandidateRow,
+        OwnedInsert<ResearchCandidateRow, "frequency" | "pain" | "buildable" | "safe" | "dismissed" | "chosen" | "summary">
       >;
       newsletter_subscribers: Table<SubscriberRow, { email: string; source?: string | null }>;
       case_studies: Table<

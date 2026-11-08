@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ExternalLink, Inbox, LayoutDashboard, LogOut, Mail, Sparkles } from "lucide-react";
+import { ExternalLink, Inbox, LayoutDashboard, LogOut, Mail, NotebookPen, Sparkles } from "lucide-react";
 
 import { signOut } from "@/app/admin/actions";
 import { Logo } from "@/components/brand/logo";
@@ -14,6 +14,7 @@ const nav = [
   { href: "/admin/leads", label: "Enquiries", icon: Inbox },
   { href: "/admin/analyses", label: "AI analyses", icon: Sparkles },
   { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
+  { href: "/admin/research", label: "My research", icon: NotebookPen },
 ];
 
 export function AdminSidebar({ email, newCounts }: { email: string; newCounts: Record<string, number> }) {
