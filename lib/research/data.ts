@@ -55,3 +55,11 @@ export const getCandidateOverrides = cache(async () => {
   const { data } = await supabase.from("research_candidates").select("*");
   return data ?? [];
 });
+
+/** Extra calendar dates added with "Add to calendar". Empty if the table isn't there yet. */
+export const getCustomDays = cache(async (): Promise<string[]> => {
+  const { supabase } = await researchContext();
+  const { data, error } = await supabase.from("research_days").select("day").order("day");
+  if (error) return [];
+  return (data ?? []).map((d) => d.day);
+});

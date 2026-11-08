@@ -1,25 +1,26 @@
 import Link from "next/link";
-import { ArrowRight, CalendarCheck, CalendarPlus, Flame, ListChecks, MessageCircleQuestion } from "lucide-react";
+import { ArrowRight, CalendarCheck, Flame, ListChecks, MessageCircleQuestion } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { AddCalendarDay, RemoveCalendarDay } from "@/components/research/editors";
 
 import { candidates, cluster, formatDay, itemsOf, nextActions, todayAccra, total, workingDays } from "@/lib/research/analysis";
 import { study, toolOptions } from "@/lib/research/config";
-import { getLogs, getQuestions } from "@/lib/research/data";
+import { getCustomDays, getLogs, getQuestions } from "@/lib/research/data";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Overview" };
 
 export default async function ResearchOverview() {
-  const [logs, questions] = await Promise.all([getLogs(), getQuestions()]);
+  const [logs, questions, customDays] = await Promise.all([getLogs(), getQuestions(), getCustomDays()]);
   const mine = logs.filter((l) => l.observer === "me");
   const today = todayAccra();
   const days = workingDays();
-  // Working days plus any extra dates you've logged (weekends, before/after the study).
-  const calendarDays = [...new Set([...days, ...mine.map((l) => l.date)])].sort();
+  // Study working days, plus dates you added to the calendar or logged.
+  const added = new Set(customDays);
+  const calendarDays = [...new Set([...days, ...customDays, ...mine.map((l) => l.date)])].sort();
   const byDate = new Map(mine.map((l) => [l.date, l]));
-  const due = days.filter((d) => d <= today);
-  const actions = nextActions(logs, today);
+  const due = [...new Set([...days, ...customDays])].filter((d) => d <= today);
+  const actions = nextActions(logs, today, customDays);
 
   const pains = mine.map((l) => l.entry.painScore).filter((p): p is number => p != null);
   const topTasks = cluster(itemsOf(mine, ["task", "seen"])).sort((a, b) => b.days.length - a.days.length).slice(0, 5);
@@ -73,23 +74,7 @@ export default async function ResearchOverview() {
             <h2 className="font-semibold">Observation calendar</h2>
             <span className="text-xs text-muted-foreground">Bar height = pain score</span>
           </div>
-          <form action="/research/log/go" className="flex items-center gap-2">
-            <label htmlFor="log-date" className="sr-only">
-              Date to add to the calendar
-            </label>
-            <input
-              id="log-date"
-              name="d"
-              type="date"
-              required
-              defaultValue={today}
-              max={today}
-              className="h-9 rounded-lg border border-input bg-background px-2.5 text-sm"
-            />
-            <Button type="submit" size="sm">
-              <CalendarPlus /> Add to calendar
-            </Button>
-          </form>
+          <AddCalendarDay today={today} />
         </div>
         <ol className="grid grid-cols-5 gap-2">
           {calendarDays.map((d) => {
@@ -98,7 +83,7 @@ export default async function ResearchOverview() {
             const isToday = d === today;
             const pain = log?.entry.painScore ?? 0;
             return (
-              <li key={d}>
+              <li key={d} className="relative">
                 <Link
                   href={`/research/log/${d}`}
                   className={cn(
@@ -113,9 +98,14 @@ export default async function ResearchOverview() {
                     <span className="h-7 w-2 overflow-hidden rounded-sm bg-secondary">
                       <span className="block w-full rounded-sm bg-primary" style={{ height: `${pain * 20}%`, marginTop: `${100 - pain * 20}%` }} />
                     </span>
-                    <span className="text-muted-foreground">{log ? (pain ? `${pain}/5` : "✓") : past ? "missed" : ""}</span>
+                    <span className="text-muted-foreground">{log ? (pain ? `${pain}/5` : "✓") : past ? "missed" : added.has(d) ? "added" : ""}</span>
                   </span>
                 </Link>
+                {added.has(d) && !log && (
+                  <span className="absolute top-1 right-1">
+                    <RemoveCalendarDay date={d} />
+                  </span>
+                )}
               </li>
             );
           })}

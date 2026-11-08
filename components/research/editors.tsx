@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowDown, ArrowUp, Check, ClipboardCopy, Loader2, Plus, Printer, RotateCcw, Save, Star, Trash2, X } from "lucide-react";
+import { ArrowDown, ArrowUp, CalendarPlus, Check, ClipboardCopy, Loader2, Plus, Printer, RotateCcw, Save, Star, Trash2, X } from "lucide-react";
 
 import {
+  addCalendarDay,
   addManualCandidate,
   addQuestions,
   deleteQuestion,
   deleteStep,
   moveStep,
+  removeCalendarDay,
   saveCandidate,
   saveStep,
   saveWeekly,
@@ -377,7 +379,7 @@ function printSummary(title: string, s: Summary) {
   const block = (h: string, t: string) => `<h2>${h}</h2><p>${esc(t).replace(/\n/g, "<br>")}</p>`;
   w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
 <style>body{font:14px/1.6 Inter,Segoe UI,Arial,sans-serif;max-width:680px;margin:40px auto;color:#111;padding:0 24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:#15803d;margin:22px 0 6px}.m{color:#555;font-size:12px}</style></head>
-<body><h1>${esc(title)}</h1><p class="m">DMCE observation, November 2026 · One-page summary for supervisor approval</p>
+<body><h1>${esc(title)}</h1><p class="m">DMCE observation, 9 Nov – 8 Dec 2026 · One-page summary for supervisor approval</p>
 ${block("The problem", s.problem)}${block("Who it affects", s.affects)}${block("What I observed", s.observed)}${block("The fix I would propose", s.fix)}
 <script>window.onload=()=>window.print()</script></body></html>`);
   w.document.close();
@@ -403,5 +405,54 @@ export function AddCandidate() {
       <PrivacyHint text={t} />
       <Feedback result={result} />
     </form>
+  );
+}
+
+/* ───────────── Calendar days ───────────── */
+
+export function AddCalendarDay({ today }: { today: string }) {
+  const [date, setDate] = useState(today);
+  const { pending, result, run } = useSave();
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        run(() => addCalendarDay(date));
+      }}
+      className="flex flex-col items-end gap-1"
+    >
+      <div className="flex items-center gap-2">
+        <label htmlFor="calendar-date" className="sr-only">
+          Date to add to the calendar
+        </label>
+        <input
+          id="calendar-date"
+          type="date"
+          required
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="h-9 rounded-lg border border-input bg-background px-2.5 text-sm"
+        />
+        <Button type="submit" size="sm" disabled={pending || !date}>
+          {pending ? <Loader2 className="animate-spin" /> : <CalendarPlus />} Add to calendar
+        </Button>
+      </div>
+      <Feedback result={result} />
+    </form>
+  );
+}
+
+export function RemoveCalendarDay({ date }: { date: string }) {
+  const { pending, run } = useSave();
+  return (
+    <button
+      type="button"
+      disabled={pending}
+      onClick={() => confirm("Remove this date from your calendar?") && run(() => removeCalendarDay(date))}
+      aria-label="Remove date from calendar"
+      className="rounded-md p-1 text-muted-foreground hover:bg-accent hover:text-destructive"
+    >
+      {pending ? <Loader2 className="size-3.5 animate-spin" /> : <X className="size-3.5" />}
+    </button>
   );
 }

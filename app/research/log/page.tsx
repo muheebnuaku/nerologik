@@ -4,18 +4,19 @@ import { Download, PenLine, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatDay, todayAccra, workingDays } from "@/lib/research/analysis";
-import { getLogs } from "@/lib/research/data";
+import { RemoveCalendarDay } from "@/components/research/editors";
+import { getCustomDays, getLogs } from "@/lib/research/data";
 import { cn } from "@/lib/utils";
 
 export const metadata = { title: "Daily log" };
 
 export default async function LogListPage() {
-  const logs = await getLogs();
+  const [logs, customDays] = await Promise.all([getLogs(), getCustomDays()]);
   const today = todayAccra();
   const mine = new Map(logs.filter((l) => l.observer === "me").map((l) => [l.date, l]));
   const teammates = [...new Set(logs.filter((l) => l.observer !== "me").map((l) => l.observer))];
   const extraDays = [...mine.keys()].filter((d) => !workingDays().includes(d));
-  const days = [...new Set([...workingDays(), ...extraDays])].sort().reverse();
+  const days = [...new Set([...workingDays(), ...extraDays, ...customDays])].sort().reverse();
 
   return (
     <>
@@ -41,8 +42,8 @@ export default async function LogListPage() {
             const items = e ? e.tasksDid.length + e.tasksSaw.length + e.delays.length + e.repeated.length + e.mistakes.length + e.questions.length + e.complaints.length : 0;
             const status = l ? "logged" : d < today ? "missed" : d === today ? "today" : "upcoming";
             return (
-              <li key={d}>
-                <Link href={`/research/log/${d}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-accent">
+              <li key={d} className="flex items-center hover:bg-accent">
+                <Link href={`/research/log/${d}`} className="flex min-w-0 flex-1 items-center gap-3 px-4 py-2.5">
                   <span className="w-28 shrink-0 text-sm font-medium">{formatDay(d)}</span>
                   <span className="min-w-0 flex-1 truncate text-sm text-muted-foreground">
                     {e ? e.painTask || e.tasksDid[0]?.task || `${items} notes` : ""}
@@ -60,6 +61,11 @@ export default async function LogListPage() {
                     {status}
                   </span>
                 </Link>
+                {customDays.includes(d) && !l && (
+                  <span className="pr-3">
+                    <RemoveCalendarDay date={d} />
+                  </span>
+                )}
               </li>
             );
           })}

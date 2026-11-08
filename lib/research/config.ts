@@ -7,10 +7,11 @@ export const study = {
   title: "DMCE Observation",
   unit: "Debt Management, Compliance and Enforcement",
   start: "2026-11-09",
-  end: "2026-11-30",
-  /** End-of-month problem choice window. */
-  chooseFrom: "2026-11-28",
-  goal: "Understand how the DMCE unit works so we can pick one real problem to solve in December.",
+  /** One month of observation. */
+  end: "2026-12-08",
+  /** Problem choice window: the last three working days (Fri 4, Mon 7, Tue 8 Dec). */
+  chooseFrom: "2026-12-04",
+  goal: "Understand how the DMCE unit works so we can pick one real problem to solve next.",
 };
 
 export const groundRules = [

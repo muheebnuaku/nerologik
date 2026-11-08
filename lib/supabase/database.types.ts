@@ -184,6 +184,10 @@ export type Database = {
         { user_id: string; created_at: string; name: string; phone: string },
         { user_id: string; created_at?: string; name: string; phone: string }
       >;
+      research_days: Table<
+        { id: string; created_at: string; user_id: string; day: string },
+        { id?: string; created_at?: string; user_id?: string; day: string }
+      >;
       research_logs: Table<ResearchLogRow, OwnedInsert<ResearchLogRow, "observer" | "pain_score" | "entry">>;
       research_process_steps: Table<
         ResearchStepRow,

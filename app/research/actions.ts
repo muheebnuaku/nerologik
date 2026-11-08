@@ -54,6 +54,26 @@ export async function deleteLog(date: string, observer: string): Promise<Result>
   return done("Log deleted.");
 }
 
+/* ───────────── Calendar days ───────────── */
+
+export async function addCalendarDay(date: string): Promise<Result> {
+  const d = isoDate.safeParse(date);
+  if (!d.success || Number.isNaN(Date.parse(d.data))) return { ok: false, message: "Pick a valid date." };
+  const { supabase } = await researchContext();
+  const { error } = await supabase.from("research_days").upsert({ day: d.data }, { onConflict: "user_id,day", ignoreDuplicates: true });
+  if (error) return { ok: false, message: /research_days/.test(error.message) ? "Run the research_days migration first." : error.message };
+  return done("Added to your calendar.");
+}
+
+export async function removeCalendarDay(date: string): Promise<Result> {
+  const d = isoDate.safeParse(date);
+  if (!d.success) return { ok: false, message: "Invalid date." };
+  const { supabase } = await researchContext();
+  const { error } = await supabase.from("research_days").delete().eq("day", d.data);
+  if (error) return { ok: false, message: error.message };
+  return done("Removed from your calendar.");
+}
+
 /* ───────────── Process map ───────────── */
 
 const stepSchema = z.object({

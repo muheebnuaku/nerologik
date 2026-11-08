@@ -432,13 +432,14 @@ export function knownTasks(logs: LogRecord[]): string[] {
 }
 
 /** What to do today, based on the calendar and what's been logged. */
-export function nextActions(logs: LogRecord[], today = todayAccra()): { label: string; href: string; tone: "primary" | "normal" }[] {
+export function nextActions(logs: LogRecord[], today = todayAccra(), extraDays: string[] = []): { label: string; href: string; tone: "primary" | "normal" }[] {
   const mine = logs.filter((l) => l.observer === "me");
   const out: { label: string; href: string; tone: "primary" | "normal" }[] = [];
   const inStudy = today >= study.start && today <= study.end;
   if (today < study.start) out.push({ label: `Observation starts ${formatDay(study.start)}. Read the ground rules and seed your process map.`, href: "/research/map", tone: "normal" });
-  if (inStudy && isWorkingDay(today) && !mine.some((l) => l.date === today)) out.push({ label: "Write today's log (5–10 minutes)", href: `/research/log/${today}`, tone: "primary" });
-  const missed = workingDays(study.start, today < study.end ? today : study.end).filter((d) => d < today && !mine.some((l) => l.date === d));
+  if (((inStudy && isWorkingDay(today)) || extraDays.includes(today)) && !mine.some((l) => l.date === today)) out.push({ label: "Write today's log (5–10 minutes)", href: `/research/log/${today}`, tone: "primary" });
+  const scheduled = [...new Set([...workingDays(study.start, today < study.end ? today : study.end), ...extraDays])].sort();
+  const missed = scheduled.filter((d) => d < today && !mine.some((l) => l.date === d));
   if (missed.length) out.push({ label: `Catch up ${missed.length} missed day${missed.length === 1 ? "" : "s"} (${missed.slice(-3).map(formatDay).join(", ")})`, href: `/research/log/${missed[missed.length - 1]}`, tone: "normal" });
   if (inStudy && weekday(today) === 5) out.push({ label: "Friday: review the week (20 minutes)", href: `/research/week?w=${weekStart(today)}`, tone: "primary" });
   if (today >= study.chooseFrom) out.push({ label: "Choose the problem and write the one-page summary", href: "/research/problems", tone: "primary" });
